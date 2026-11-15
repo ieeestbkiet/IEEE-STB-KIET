@@ -339,24 +339,24 @@ export default function TeamPage() {
                     className="neu-card rounded-3xl p-6 border border-white/70 text-center flex flex-col items-center justify-between hover:shadow-[-10px_-10px_20px_#ffffff,10px_10px_20px_#c4d0e0] hover:translate-y-[-4px] transition-all duration-300 group"
                   >
                     <div className="w-full flex flex-col items-center">
-                      {/* Photo Container with Organic Fluid Blob & Boundary-Free Portrait (Reference 2 style) */}
+                      {/* Photo Container with Organic Fluid Blob & Free-Border Cutout (Reference 2 style) */}
                       <div className="relative w-36 h-44 mb-4 flex items-end justify-center">
                         {/* Organic Fluid Blob Backdrop */}
                         <div
-                          className={`absolute inset-x-1.5 top-2 bottom-3 bg-gradient-to-br ${blobGradient} ${blobShape} transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-md opacity-90`}
+                          className={`absolute inset-x-1.5 top-2 bottom-2 bg-gradient-to-br ${blobGradient} ${blobShape} transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-md opacity-90`}
                         />
 
-                        {/* Boundary-Free Portrait with Soft Dissolve Mask at Bottom */}
-                        <div className="relative z-10 w-32 h-40 overflow-hidden flex items-end justify-center [mask-image:linear-gradient(to_bottom,black_68%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_68%,transparent_100%)]">
+                        {/* Free-of-Boundary Portrait Cutout */}
+                        <div className="relative z-10 w-36 h-44 flex items-end justify-center">
                           {m.photoUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={m.photoUrl}
                               alt={m.name}
-                              className="w-full h-full object-cover object-top rounded-t-3xl filter contrast-105 group-hover:scale-105 transition-transform duration-500"
+                              className="w-full h-full object-contain object-bottom filter contrast-105 group-hover:scale-105 transition-transform duration-500 drop-shadow-md"
                             />
                           ) : (
-                            <div className="w-full h-full rounded-t-3xl text-white font-black flex items-center justify-center text-3xl pb-6">
+                            <div className="w-full h-full text-white font-black flex items-center justify-center text-3xl pb-6">
                               {m.name.charAt(0)}
                             </div>
                           )}
