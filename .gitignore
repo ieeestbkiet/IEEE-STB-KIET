@@ -15,6 +15,11 @@ out/
 # Local uploads
 backend/uploads/
 uploads/
+scratch/
+temp/
+*.png
+!frontend/public/*.png
+!admin/public/*.png
 
 # Environment files and credentials
 .env
