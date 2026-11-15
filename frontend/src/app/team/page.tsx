@@ -218,13 +218,6 @@ export default function TeamPage() {
                       )}
                     </div>
 
-                    {/* Shoulder Folded Ribbon Badge */}
-                    <div className="absolute top-6 right-0 z-20 pointer-events-none">
-                      <div className={`backdrop-blur-md px-3.5 py-1 rounded-l-full text-[9px] font-black uppercase tracking-widest border-l border-t border-b shadow-sm ${theme.badgeBg}`}>
-                        ★ Core Lead
-                      </div>
-                    </div>
-
                     {/* Initial State: Subtle Bottom Card Identifier */}
                     <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/45 to-transparent pt-24 pb-6 px-5 text-center transition-opacity duration-300 group-hover:opacity-0 pointer-events-none">
                       {member.department && (
@@ -246,12 +239,8 @@ export default function TeamPage() {
                       <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_1px_1px,#ffffff_1px,transparent_0)] [background-size:16px_16px] pointer-events-none" />
 
                       <div className="relative z-10 flex flex-col items-center max-w-[90%] transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                        <span className={`backdrop-blur-md px-3.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm mb-3 ${theme.badgeBg}`}>
-                          ★ Core Lead
-                        </span>
-
                         {member.department && (
-                          <span className={`text-[11px] font-mono uppercase font-bold tracking-widest mb-1 opacity-90 ${theme.deptTag}`}>
+                          <span className={`text-[11px] font-mono uppercase font-bold tracking-widest mb-1.5 opacity-90 ${theme.deptTag}`}>
                             {member.department}
                           </span>
                         )}
