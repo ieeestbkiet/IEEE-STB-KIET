@@ -31,7 +31,7 @@ interface DignitaryItem {
 }
 
 export default function DignitariesPage() {
-  const { isSuperAdmin, hasPermission } = useAuth();
+  const { isSuperAdmin, hasPermission, user, loading: authLoading } = useAuth();
   const [dignitaries, setDignitaries] = useState<DignitaryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +50,7 @@ export default function DignitariesPage() {
 
   const fetchDignitaries = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await api.get('/dignitaries/admin');
       if (res.success && res.data) {
@@ -63,8 +64,10 @@ export default function DignitariesPage() {
   };
 
   useEffect(() => {
-    fetchDignitaries();
-  }, []);
+    if (!authLoading && user) {
+      fetchDignitaries();
+    }
+  }, [authLoading, user]);
 
   const openCreateModal = () => {
     setEditingId(null);
@@ -162,9 +165,17 @@ export default function DignitariesPage() {
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
+          <div className="p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 text-xs flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+            <button
+              onClick={() => fetchDignitaries()}
+              className="px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded text-[11px] font-bold border border-slate-300 transition"
+            >
+              Retry
+            </button>
           </div>
         )}
 

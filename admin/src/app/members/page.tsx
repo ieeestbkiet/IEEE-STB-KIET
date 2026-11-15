@@ -46,7 +46,7 @@ interface MemberItem {
 }
 
 export default function MembersPage() {
-  const { isSuperAdmin, hasPermission } = useAuth();
+  const { isSuperAdmin, hasPermission, user, loading: authLoading } = useAuth();
   const [members, setMembers] = useState<MemberItem[]>([]);
   const [activeTier, setActiveTier] = useState<string>('all');
   const [loading, setLoading] = useState(true);
@@ -76,12 +76,14 @@ export default function MembersPage() {
 
   const fetchMembers = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await api.get('/members/admin');
       if (res.success && res.data) {
         setMembers(res.data);
       }
     } catch (err: any) {
+      console.error('Failed to fetch members:', err);
       setError(err.message || 'Failed to fetch members');
     } finally {
       setLoading(false);
@@ -89,8 +91,10 @@ export default function MembersPage() {
   };
 
   useEffect(() => {
-    fetchMembers();
-  }, []);
+    if (!authLoading && user) {
+      fetchMembers();
+    }
+  }, [authLoading, user]);
 
   const handleBatchImport = async () => {
     if (!batchRawText.trim()) {
@@ -282,9 +286,17 @@ export default function MembersPage() {
         </div>
 
         {error && (
-          <div className="p-4 neu-inset text-red-600 rounded-2xl text-xs flex items-center gap-2.5 font-medium">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
+          <div className="p-4 neu-inset text-red-600 rounded-2xl text-xs flex items-center justify-between gap-3 font-medium">
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+            <button
+              onClick={() => fetchMembers()}
+              className="neu-btn px-3 py-1.5 rounded-xl text-slate-700 hover:text-ieee-blue text-[11px] font-bold shrink-0 transition"
+            >
+              Retry
+            </button>
           </div>
         )}
 

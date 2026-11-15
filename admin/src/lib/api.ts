@@ -22,12 +22,33 @@ export const getAuthToken = async (): Promise<string | null> => {
     const devToken = localStorage.getItem('dev_admin_token');
     if (devToken) return devToken;
   }
+
+  // 1. Wait for Firebase Auth to finish resolving initial auth state from storage
+  if (!auth.currentUser && typeof auth.authStateReady === 'function') {
+    try {
+      await auth.authStateReady();
+    } catch (e) {
+      console.warn('Firebase authStateReady error:', e);
+    }
+  }
+
+  // 2. Brief grace period (150ms) if IndexedDB is still hydrating
+  if (!auth.currentUser && typeof window !== 'undefined') {
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  }
+
   if (!auth.currentUser) return null;
-  return await auth.currentUser.getIdToken();
+
+  try {
+    return await auth.currentUser.getIdToken();
+  } catch (err) {
+    console.error('Failed to get Firebase ID token:', err);
+    return null;
+  }
 };
 
 export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
-  const token = await getAuthToken();
+  let token = await getAuthToken();
   const headers = new Headers(options.headers || {});
 
   if (token) {
@@ -40,10 +61,26 @@ export const fetchApi = async (endpoint: string, options: RequestInit = {}) => {
 
   const base = getApiBaseUrl();
   const url = endpoint.startsWith('http') ? endpoint : `${base}${endpoint}`;
-  const response = await fetch(url, {
+  let response = await fetch(url, {
     ...options,
     headers,
   });
+
+  // If token expired (401) and Firebase user is active, force refresh token and retry once
+  if (response.status === 401 && auth.currentUser) {
+    try {
+      const refreshedToken = await auth.currentUser.getIdToken(true);
+      if (refreshedToken) {
+        headers.set('Authorization', `Bearer ${refreshedToken}`);
+        response = await fetch(url, {
+          ...options,
+          headers,
+        });
+      }
+    } catch {
+      // Ignore retry failure and proceed to throw standard error
+    }
+  }
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {

@@ -33,7 +33,7 @@ interface SubAdminUser {
 }
 
 export default function SubAdminsPage() {
-  const { isSuperAdmin } = useAuth();
+  const { isSuperAdmin, user, loading: authLoading } = useAuth();
   const [subadmins, setSubadmins] = useState<SubAdminUser[]>([]);
   const [roles, setRoles] = useState<RoleData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,6 +49,7 @@ export default function SubAdminsPage() {
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const [adminsRes, rolesRes] = await Promise.all([
         api.get('/auth/subadmins'),
@@ -72,8 +73,10 @@ export default function SubAdminsPage() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!authLoading && user) {
+      fetchData();
+    }
+  }, [authLoading, user]);
 
   const handleCreateSubAdmin = async (e: React.FormEvent) => {
     e.preventDefault();

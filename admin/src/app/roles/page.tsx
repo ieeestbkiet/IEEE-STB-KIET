@@ -39,7 +39,7 @@ const SECTIONS = [
 const ACTIONS: (keyof SectionPermissions)[] = ['view', 'create', 'edit', 'delete', 'publish'];
 
 export default function CustomRoleBuilderPage() {
-  const { isSuperAdmin } = useAuth();
+  const { isSuperAdmin, user, loading: authLoading } = useAuth();
   const [roles, setRoles] = useState<RoleData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +54,7 @@ export default function CustomRoleBuilderPage() {
 
   const fetchRoles = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await api.get('/roles');
       if (res.success && res.data) {
@@ -67,8 +68,10 @@ export default function CustomRoleBuilderPage() {
   };
 
   useEffect(() => {
-    fetchRoles();
-  }, []);
+    if (!authLoading && user) {
+      fetchRoles();
+    }
+  }, [authLoading, user]);
 
   const openCreateModal = () => {
     setEditingRoleId(null);
