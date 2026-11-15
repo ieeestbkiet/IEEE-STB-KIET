@@ -1,15 +1,69 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import useSWR from 'swr';
 import Link from 'next/link';
-import { Users, Linkedin, Github, Mail, Award, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
+import {
+  Users,
+  Linkedin,
+  Github,
+  Mail,
+  Award,
+  ArrowRight,
+  Shield,
+  Search,
+  Sparkles,
+} from 'lucide-react';
 import { fetcher } from '../../lib/api';
-import { SectionHeader } from '../../components/SectionHeader';
 import { EmptyState } from '../../components/EmptyState';
 
+// Distinct IEEE-themed Arch Pillar gradients for Core Leads (Inspired by Reference Design 1)
+const corePillarThemes = [
+  {
+    bg: 'bg-gradient-to-b from-[#002855] via-[#003875] to-[#001f3f]',
+    badgeBg: 'bg-cyan-400/20 text-cyan-200 border-cyan-300/40',
+    deptTag: 'text-cyan-300',
+    socialHover: 'hover:text-cyan-300',
+  },
+  {
+    bg: 'bg-gradient-to-b from-[#00629b] via-[#0072ce] to-[#004f7c]',
+    badgeBg: 'bg-white/25 text-white border-white/40',
+    deptTag: 'text-blue-100',
+    socialHover: 'hover:text-blue-200',
+  },
+  {
+    bg: 'bg-gradient-to-b from-[#0f4c81] via-[#005a9e] to-[#002e5b]',
+    badgeBg: 'bg-cyan-300/20 text-cyan-100 border-cyan-200/40',
+    deptTag: 'text-cyan-200',
+    socialHover: 'hover:text-cyan-200',
+  },
+  {
+    bg: 'bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#0c4a6e]',
+    badgeBg: 'bg-white/25 text-white border-white/40',
+    deptTag: 'text-sky-100',
+    socialHover: 'hover:text-sky-200',
+  },
+];
+
+// Organic Fluid Blob shapes & IEEE gradients for Regular Members (Inspired by Reference Design 2)
+const blobShapes = [
+  'rounded-[42%_58%_70%_30%/45%_45%_55%_55%]',
+  'rounded-[50%_50%_30%_70%/55%_65%_35%_45%]',
+  'rounded-[60%_40%_50%_50%/40%_50%_50%_60%]',
+  'rounded-[35%_65%_45%_55%/50%_35%_65%_50%]',
+];
+
+const blobGradients = [
+  'from-[#00629b] to-[#00b5e2]',
+  'from-[#002855] to-[#0072ce]',
+  'from-[#0284c7] to-[#38bdf8]',
+  'from-[#1e3a8a] to-[#2563eb]',
+];
+
 export default function TeamPage() {
+  const [searchTerm, setSearchTerm] = useState('');
   const { data: membersRes, isLoading } = useSWR('/members', fetcher);
+
   const grouped = membersRes?.grouped || {
     core_team: [],
     regular_member: [],
@@ -22,18 +76,61 @@ export default function TeamPage() {
     ...(grouped.content_member || []),
   ];
 
+  const filteredCore = coreTeam.filter((m: any) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      m.name?.toLowerCase().includes(term) ||
+      m.designation?.toLowerCase().includes(term) ||
+      m.department?.toLowerCase().includes(term)
+    );
+  });
+
+  const filteredRegular = regularMembers.filter((m: any) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      m.name?.toLowerCase().includes(term) ||
+      m.designation?.toLowerCase().includes(term) ||
+      m.department?.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div className="py-16 bg-[#e8edf5] min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-        <div>
-          <SectionHeader
-            badge="Student Leadership"
-            title="Our Members & Executive Team"
-            subtitle="The passionate student engineers, researchers, and technical leaders driving the IEEE Student Branch."
-          />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+        {/* Page Hero Header */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full neu-pill text-xs font-bold uppercase tracking-widest text-ieee-blue">
+            <Sparkles className="w-3.5 h-3.5 text-ieee-cyan" />
+            <span>Student Leadership & Directory</span>
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-800">
+            Meet our <span className="bg-gradient-to-r from-ieee-blue via-ieee-cyan to-ieee-dark bg-clip-text text-transparent">Branch Team</span>
+          </h1>
+
+          <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
+            We believe in nurturing exceptional technical talent and cultivating a dynamic ecosystem where
+            creativity, engineering innovation, and student leadership flourish.
+          </p>
+
+          {/* Neumorphic Search Bar */}
+          <div className="pt-2 max-w-md mx-auto">
+            <div className="relative neu-inset rounded-2xl">
+              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search member by name, role, or department..."
+                className="w-full pl-11 pr-4 py-3 rounded-2xl bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
+              />
+            </div>
+          </div>
 
           {/* Institutional Dignitaries Banner Link */}
-          <div className="max-w-3xl mx-auto neu-card rounded-3xl p-5 sm:p-6 flex items-center justify-between gap-4 mb-12 border border-white/70">
+          <div className="neu-card rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 border border-white/70 text-left">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-[#e8edf5] shadow-[inset_2px_2px_5px_#c4d0e0,inset_-2px_-2px_5px_#ffffff] text-ieee-blue flex items-center justify-center shrink-0">
                 <Award className="w-6 h-6" />
@@ -43,7 +140,7 @@ export default function TeamPage() {
                   Looking for our Institutional Dignitaries & Branch Counselor?
                 </p>
                 <p className="text-[11px] text-slate-500 font-medium">
-                  Institutional leadership and branch counselors (with words of wisdom) are featured on the Home Page.
+                  College patrons and branch counselors (with words of wisdom) are prominently featured on the Home Page.
                 </p>
               </div>
             </div>
@@ -57,13 +154,161 @@ export default function TeamPage() {
           </div>
         </div>
 
-        {/* 1. EXECUTIVE CORE TEAM */}
-        <section>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-3 h-7 bg-gradient-to-b from-ieee-blue to-ieee-dark rounded-full shadow-[-2px_-2px_5px_#ffffff,2px_2px_5px_#c4d0e0]" />
+        {/* ============================================================ */}
+        {/* 1. EXECUTIVE CORE LEADS SECTION (Arch Pillar Format - Image 1) */}
+        {/* ============================================================ */}
+        <section className="space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-300/50 pb-4">
             <div>
-              <h3 className="text-xl font-extrabold text-slate-800">Executive Core Team</h3>
-              <p className="text-xs text-slate-500 font-medium">Branch officers, coordinators, and domain leads</p>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-ieee-blue neu-pill px-3 py-1 inline-block mb-2">
+                Executive Council
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
+                Executive Core Leads
+              </h2>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                Branch council officers, domain directors, and lead organizers
+              </p>
+            </div>
+            <div className="text-xs font-bold text-slate-500">
+              {filteredCore.length} {filteredCore.length === 1 ? 'Lead' : 'Leads'}
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="flex justify-center p-16">
+              <div className="w-10 h-10 border-4 border-ieee-blue border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : filteredCore.length === 0 ? (
+            <EmptyState
+              icon={Users}
+              title="No Core Leads Found"
+              description="Student branch executive council details are being updated for this academic term."
+            />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-4">
+              {filteredCore.map((member: any, index: number) => {
+                const theme = corePillarThemes[index % corePillarThemes.length];
+                return (
+                  <div
+                    key={member._id}
+                    className="relative group flex flex-col justify-between overflow-hidden rounded-t-[5.5rem] rounded-b-[2rem] shadow-[-10px_-10px_24px_#ffffff,10px_10px_24px_#c4d0e0] border-2 border-white/70 hover:translate-y-[-8px] transition-all duration-500"
+                    style={{ minHeight: '520px' }}
+                  >
+                    {/* The Background Pillar Gradient */}
+                    <div className={`absolute inset-0 ${theme.bg}`} />
+
+                    {/* Subtle Pattern Grid Overlay inside Pillar */}
+                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,#ffffff_1px,transparent_0)] [background-size:16px_16px] pointer-events-none" />
+
+                    {/* Angled Folded Tag at Shoulder (Reference 1 style) */}
+                    <div className="absolute top-6 right-0 z-20">
+                      <div className={`backdrop-blur-md px-3.5 py-1 rounded-l-full text-[9px] font-black uppercase tracking-widest border-l border-t border-b shadow-sm ${theme.badgeBg}`}>
+                        ★ Core Lead
+                      </div>
+                    </div>
+
+                    {/* Top Content: Name & Designation */}
+                    <div className="relative z-10 pt-12 px-6 text-center flex flex-col items-center">
+                      {member.department && (
+                        <span className={`text-[10px] font-mono uppercase font-bold tracking-widest mb-1.5 opacity-90 ${theme.deptTag}`}>
+                          {member.department}
+                        </span>
+                      )}
+
+                      <h3 className="text-xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-sm">
+                        {member.name}
+                      </h3>
+
+                      <p className="text-xs font-semibold text-white/90 mt-1 uppercase tracking-wider">
+                        {member.designation}
+                      </p>
+
+                      {/* Social Actions */}
+                      <div className="flex items-center justify-center gap-2 mt-4">
+                        {member.socialLinks?.linkedin && (
+                          <a
+                            href={member.socialLinks.linkedin}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="w-8 h-8 rounded-full bg-white/15 hover:bg-white text-white hover:text-blue-700 backdrop-blur-md flex items-center justify-center transition shadow-sm"
+                            title="LinkedIn Profile"
+                          >
+                            <Linkedin className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        {member.socialLinks?.github && (
+                          <a
+                            href={member.socialLinks.github}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="w-8 h-8 rounded-full bg-white/15 hover:bg-white text-white hover:text-slate-900 backdrop-blur-md flex items-center justify-center transition shadow-sm"
+                            title="GitHub Profile"
+                          >
+                            <Github className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                        {member.email && (
+                          <a
+                            href={`mailto:${member.email}`}
+                            className="w-8 h-8 rounded-full bg-white/15 hover:bg-white text-white hover:text-ieee-blue backdrop-blur-md flex items-center justify-center transition shadow-sm"
+                            title="Email Lead"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Bottom Portrait: Large cut-out style image filling bottom arch (Reference 1 style) */}
+                    <div className="relative z-10 w-full h-72 sm:h-80 overflow-hidden mt-auto flex items-end justify-center">
+                      {member.photoUrl ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={member.photoUrl}
+                            alt={member.name}
+                            className="w-full h-full object-cover object-top filter brightness-105 contrast-105 group-hover:scale-105 transition-transform duration-700 rounded-b-[1.9rem]"
+                          />
+                          {/* Soft bottom vignette gradient for smooth finish */}
+                          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none rounded-b-[1.9rem]" />
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-white/40 pb-10">
+                          <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-3xl font-black text-white/80 border border-white/20">
+                            {member.name.charAt(0)}
+                          </div>
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-white/60 mt-2 font-semibold">
+                            IEEE Lead
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* ============================================================ */}
+        {/* 2. REGULAR MEMBERS SECTION (Organic Fluid Blob Format - Image 2) */}
+        {/* ============================================================ */}
+        <section className="space-y-8 pt-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-300/50 pb-4">
+            <div>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-ieee-cyan neu-pill px-3 py-1 inline-block mb-2">
+                Branch Directory
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight">
+                Our Members & Innovators
+              </h2>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                Active student branch members, research associates, and technical contributors
+              </p>
+            </div>
+            <div className="text-xs font-bold text-slate-500">
+              {filteredRegular.length} {filteredRegular.length === 1 ? 'Member' : 'Members'}
             </div>
           </div>
 
@@ -71,124 +316,106 @@ export default function TeamPage() {
             <div className="flex justify-center p-12">
               <div className="w-8 h-8 border-4 border-ieee-blue border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : coreTeam.length === 0 ? (
+          ) : filteredRegular.length === 0 ? (
             <EmptyState
               icon={Users}
-              title="Core Team Updating"
-              description="Student branch executive council details are being finalized for this academic year."
+              title="No Regular Members Found"
+              description="New student members joining in current induction drive will appear here."
             />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {coreTeam.map((member: any) => (
-                <div
-                  key={member._id}
-                  className="neu-card rounded-3xl p-7 border border-white/60 flex flex-col justify-between hover:shadow-[-10px_-10px_20px_#ffffff,10px_10px_20px_#c4d0e0] transition-all duration-300"
-                >
-                  <div>
-                    <div className="flex items-center gap-4 mb-5">
-                      {member.photoUrl ? (
-                        <div className="w-16 h-16 rounded-2xl p-1 neu-inset shrink-0 overflow-hidden">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={member.photoUrl}
-                            alt={member.name}
-                            className="w-full h-full object-cover rounded-xl"
-                          />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-8">
+              {filteredRegular.map((m: any, idx: number) => {
+                const blobShape = blobShapes[idx % blobShapes.length];
+                const blobGradient = blobGradients[idx % blobGradients.length];
+
+                return (
+                  <div
+                    key={m._id}
+                    className="neu-card rounded-3xl p-6 border border-white/70 text-center flex flex-col items-center justify-between hover:shadow-[-10px_-10px_20px_#ffffff,10px_10px_20px_#c4d0e0] hover:translate-y-[-4px] transition-all duration-300 group"
+                  >
+                    <div className="w-full flex flex-col items-center">
+                      {/* Photo Container with Organic Fluid Blob (Reference 2 style) */}
+                      <div className="relative w-36 h-36 mb-5 flex items-center justify-center">
+                        {/* Organic Fluid Blob */}
+                        <div
+                          className={`absolute inset-0 bg-gradient-to-br ${blobGradient} ${blobShape} transform transition-transform duration-500 group-hover:rotate-6 group-hover:scale-105 shadow-md opacity-90`}
+                        />
+
+                        {/* Headshot Portrait */}
+                        <div className="relative w-28 h-28 rounded-full overflow-hidden p-1 neu-inset bg-[#e8edf5] border border-white/80 shadow-inner">
+                          {m.photoUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={m.photoUrl}
+                              alt={m.name}
+                              className="w-full h-full object-cover object-top rounded-full filter contrast-105 group-hover:scale-105 transition-transform duration-500"
+                            />
+                          ) : (
+                            <div className="w-full h-full rounded-full bg-[#e8edf5] text-ieee-blue font-black flex items-center justify-center text-xl">
+                              {m.name.charAt(0)}
+                            </div>
+                          )}
                         </div>
-                      ) : (
-                        <div className="w-16 h-16 rounded-2xl neu-inset text-ieee-blue font-bold flex items-center justify-center shrink-0 text-xl">
-                          {member.name.charAt(0)}
-                        </div>
-                      )}
-                      <div>
-                        <h4 className="text-base font-bold text-slate-800">{member.name}</h4>
-                        <p className="text-xs font-bold text-ieee-blue">{member.designation}</p>
-                        {member.department && (
-                          <p className="text-[11px] text-slate-500 font-medium mt-0.5">{member.department}</p>
-                        )}
-                        <span className="inline-block mt-1.5 text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full neu-pill text-amber-700 bg-amber-50/50">
-                          ★ Core Member
-                        </span>
                       </div>
+
+                      {/* Designation subtitle (Small font like Reference 2) */}
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-ieee-blue">
+                        {m.designation || 'Student Member'}
+                      </p>
+
+                      {/* Full Name */}
+                      <h4 className="text-base font-extrabold text-slate-800 tracking-tight mt-1 truncate w-full">
+                        {m.name}
+                      </h4>
+
+                      {/* Department */}
+                      {m.department && (
+                        <p className="text-[11px] text-slate-500 font-medium mt-0.5 truncate w-full">
+                          {m.department}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Contact & Social Links */}
+                    <div className="mt-5 pt-3 border-t border-slate-300/40 w-full flex items-center justify-center gap-2">
+                      {m.socialLinks?.linkedin && (
+                        <a
+                          href={m.socialLinks.linkedin}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="neu-btn p-1.5 rounded-xl text-slate-500 hover:text-blue-600 transition"
+                          title="LinkedIn"
+                        >
+                          <Linkedin className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      {m.socialLinks?.github && (
+                        <a
+                          href={m.socialLinks.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="neu-btn p-1.5 rounded-xl text-slate-500 hover:text-slate-900 transition"
+                          title="GitHub"
+                        >
+                          <Github className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      {m.email && (
+                        <a
+                          href={`mailto:${m.email}`}
+                          className="neu-btn p-1.5 rounded-xl text-slate-500 hover:text-ieee-blue transition"
+                          title={m.email}
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                        </a>
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3 mt-6 pt-5 border-t border-slate-300/40">
-                    {member.socialLinks?.linkedin && (
-                      <a
-                        href={member.socialLinks.linkedin}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="neu-btn p-2 rounded-xl text-slate-600 hover:text-blue-600 transition"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                      </a>
-                    )}
-                    {member.socialLinks?.github && (
-                      <a
-                        href={member.socialLinks.github}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="neu-btn p-2 rounded-xl text-slate-600 hover:text-slate-900 transition"
-                      >
-                        <Github className="w-4 h-4" />
-                      </a>
-                    )}
-                    {member.email && (
-                      <a
-                        href={`mailto:${member.email}`}
-                        className="neu-btn p-2 rounded-xl text-slate-600 hover:text-ieee-blue transition"
-                      >
-                        <Mail className="w-4 h-4" />
-                      </a>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
-
-        {/* 2. REGULAR MEMBERS */}
-        {regularMembers.length > 0 && (
-          <section className="pt-10 border-t border-slate-300/50">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-3 h-7 bg-gradient-to-b from-ieee-cyan to-ieee-blue rounded-full shadow-[-2px_-2px_5px_#ffffff,2px_2px_5px_#c4d0e0]" />
-              <div>
-                <h3 className="text-xl font-extrabold text-slate-800">Regular Members</h3>
-                <p className="text-xs text-slate-500 font-medium">Active student branch engineers and innovators</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {regularMembers.map((m: any) => (
-                <div
-                  key={m._id}
-                  className="neu-card-sm rounded-2xl p-5 border border-white/60 text-center flex flex-col items-center hover:shadow-[-6px_-6px_12px_#ffffff,6px_6px_12px_#c4d0e0] transition"
-                >
-                  {m.photoUrl ? (
-                    <div className="w-16 h-16 rounded-2xl p-1 neu-inset mb-3 overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={m.photoUrl} alt={m.name} className="w-full h-full object-cover rounded-xl" />
-                    </div>
-                  ) : (
-                    <div className="w-16 h-16 rounded-2xl neu-inset text-ieee-blue font-bold flex items-center justify-center mb-3 text-base">
-                      {m.name.charAt(0)}
-                    </div>
-                  )}
-
-                  <h5 className="text-xs font-bold text-slate-800 truncate w-full">{m.name}</h5>
-                  <p className="text-[11px] text-ieee-blue font-semibold truncate w-full mt-0.5">
-                    {m.designation}
-                  </p>
-                  {m.department && (
-                    <p className="text-[10px] text-slate-500 font-medium mt-0.5 truncate w-full">{m.department}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </div>
   );
