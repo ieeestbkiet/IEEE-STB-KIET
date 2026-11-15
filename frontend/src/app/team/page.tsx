@@ -47,10 +47,10 @@ const corePillarThemes = [
 
 // Organic Fluid Blob shapes & IEEE gradients for Regular Members (Inspired by Reference Design 2)
 const blobShapes = [
-  'rounded-[42%_58%_70%_30%/45%_45%_55%_55%]',
-  'rounded-[50%_50%_30%_70%/55%_65%_35%_45%]',
-  'rounded-[60%_40%_50%_50%/40%_50%_50%_60%]',
-  'rounded-[35%_65%_45%_55%/50%_35%_65%_50%]',
+  'rounded-[44%_56%_65%_35%/52%_42%_58%_48%]',
+  'rounded-[56%_44%_40%_60%/45%_60%_40%_55%]',
+  'rounded-[40%_60%_55%_45%/58%_38%_62%_42%]',
+  'rounded-[52%_48%_68%_32%/38%_65%_35%_62%]',
 ];
 
 const blobGradients = [
@@ -334,24 +334,24 @@ export default function TeamPage() {
                     className="neu-card rounded-3xl p-6 border border-white/70 text-center flex flex-col items-center justify-between hover:shadow-[-10px_-10px_20px_#ffffff,10px_10px_20px_#c4d0e0] hover:translate-y-[-4px] transition-all duration-300 group"
                   >
                     <div className="w-full flex flex-col items-center">
-                      {/* Photo Container with Organic Fluid Blob (Reference 2 style) */}
-                      <div className="relative w-36 h-36 mb-5 flex items-center justify-center">
-                        {/* Organic Fluid Blob */}
+                      {/* Photo Container with Organic Fluid Blob & Boundary-Free Portrait (Reference 2 style) */}
+                      <div className="relative w-36 h-44 mb-4 flex items-end justify-center">
+                        {/* Organic Fluid Blob Backdrop */}
                         <div
-                          className={`absolute inset-0 bg-gradient-to-br ${blobGradient} ${blobShape} transform transition-transform duration-500 group-hover:rotate-6 group-hover:scale-105 shadow-md opacity-90`}
+                          className={`absolute inset-x-1.5 top-2 bottom-3 bg-gradient-to-br ${blobGradient} ${blobShape} transform transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-md opacity-90`}
                         />
 
-                        {/* Headshot Portrait */}
-                        <div className="relative w-28 h-28 rounded-full overflow-hidden p-1 neu-inset bg-[#e8edf5] border border-white/80 shadow-inner">
+                        {/* Boundary-Free Portrait with Soft Dissolve Mask at Bottom */}
+                        <div className="relative z-10 w-32 h-40 overflow-hidden flex items-end justify-center [mask-image:linear-gradient(to_bottom,black_68%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_68%,transparent_100%)]">
                           {m.photoUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={m.photoUrl}
                               alt={m.name}
-                              className="w-full h-full object-cover object-top rounded-full filter contrast-105 group-hover:scale-105 transition-transform duration-500"
+                              className="w-full h-full object-cover object-top rounded-t-3xl filter contrast-105 group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="w-full h-full rounded-full bg-[#e8edf5] text-ieee-blue font-black flex items-center justify-center text-xl">
+                            <div className="w-full h-full rounded-t-3xl text-white font-black flex items-center justify-center text-3xl pb-6">
                               {m.name.charAt(0)}
                             </div>
                           )}
