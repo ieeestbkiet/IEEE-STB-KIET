@@ -195,86 +195,19 @@ export default function TeamPage() {
                     className="relative group flex flex-col justify-between overflow-hidden rounded-t-[5.5rem] rounded-b-[2rem] shadow-[-10px_-10px_24px_#ffffff,10px_10px_24px_#c4d0e0] border-2 border-white/70 hover:translate-y-[-8px] transition-all duration-500"
                     style={{ minHeight: '520px' }}
                   >
-                    {/* The Background Pillar Gradient */}
-                    <div className={`absolute inset-0 ${theme.bg}`} />
-
-                    {/* Subtle Pattern Grid Overlay inside Pillar */}
-                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_1px_1px,#ffffff_1px,transparent_0)] [background-size:16px_16px] pointer-events-none" />
-
-                    {/* Angled Folded Tag at Shoulder (Reference 1 style) */}
-                    <div className="absolute top-6 right-0 z-20">
-                      <div className={`backdrop-blur-md px-3.5 py-1 rounded-l-full text-[9px] font-black uppercase tracking-widest border-l border-t border-b shadow-sm ${theme.badgeBg}`}>
-                        ★ Core Lead
-                      </div>
-                    </div>
-
-                    {/* Top Content: Name & Designation */}
-                    <div className="relative z-10 pt-12 px-6 text-center flex flex-col items-center">
-                      {member.department && (
-                        <span className={`text-[10px] font-mono uppercase font-bold tracking-widest mb-1.5 opacity-90 ${theme.deptTag}`}>
-                          {member.department}
-                        </span>
-                      )}
-
-                      <h3 className="text-xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-sm">
-                        {member.name}
-                      </h3>
-
-                      <p className="text-xs font-semibold text-white/90 mt-1 uppercase tracking-wider">
-                        {member.designation}
-                      </p>
-
-                      {/* Social Actions */}
-                      <div className="flex items-center justify-center gap-2 mt-4">
-                        {member.socialLinks?.linkedin && (
-                          <a
-                            href={member.socialLinks.linkedin}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="w-8 h-8 rounded-full bg-white/15 hover:bg-white text-white hover:text-blue-700 backdrop-blur-md flex items-center justify-center transition shadow-sm"
-                            title="LinkedIn Profile"
-                          >
-                            <Linkedin className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                        {member.socialLinks?.github && (
-                          <a
-                            href={member.socialLinks.github}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="w-8 h-8 rounded-full bg-white/15 hover:bg-white text-white hover:text-slate-900 backdrop-blur-md flex items-center justify-center transition shadow-sm"
-                            title="GitHub Profile"
-                          >
-                            <Github className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                        {member.email && (
-                          <a
-                            href={`mailto:${member.email}`}
-                            className="w-8 h-8 rounded-full bg-white/15 hover:bg-white text-white hover:text-ieee-blue backdrop-blur-md flex items-center justify-center transition shadow-sm"
-                            title="Email Lead"
-                          >
-                            <Mail className="w-3.5 h-3.5" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Bottom Portrait: Large cut-out style image filling bottom arch (Reference 1 style) */}
-                    <div className="relative z-10 w-full h-72 sm:h-80 overflow-hidden mt-auto flex items-end justify-center">
+                    {/* Full Pillar Portrait Photo (Initially Visible) */}
+                    <div className="absolute inset-0 w-full h-full overflow-hidden">
                       {member.photoUrl ? (
                         <>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={member.photoUrl}
                             alt={member.name}
-                            className="w-full h-full object-cover object-top filter brightness-105 contrast-105 group-hover:scale-105 transition-transform duration-700 rounded-b-[1.9rem]"
+                            className="w-full h-full object-cover object-top filter brightness-105 contrast-105 group-hover:scale-110 transition-transform duration-700 ease-out"
                           />
-                          {/* Soft bottom vignette gradient for smooth finish */}
-                          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none rounded-b-[1.9rem]" />
                         </>
                       ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-white/40 pb-10">
+                        <div className={`w-full h-full ${theme.bg} flex flex-col items-center justify-center text-white/50`}>
                           <div className="w-24 h-24 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-3xl font-black text-white/80 border border-white/20">
                             {member.name.charAt(0)}
                           </div>
@@ -283,6 +216,89 @@ export default function TeamPage() {
                           </span>
                         </div>
                       )}
+                    </div>
+
+                    {/* Shoulder Folded Ribbon Badge */}
+                    <div className="absolute top-6 right-0 z-20 pointer-events-none">
+                      <div className={`backdrop-blur-md px-3.5 py-1 rounded-l-full text-[9px] font-black uppercase tracking-widest border-l border-t border-b shadow-sm ${theme.badgeBg}`}>
+                        ★ Core Lead
+                      </div>
+                    </div>
+
+                    {/* Initial State: Subtle Bottom Card Identifier */}
+                    <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/90 via-black/45 to-transparent pt-24 pb-6 px-5 text-center transition-opacity duration-300 group-hover:opacity-0 pointer-events-none">
+                      {member.department && (
+                        <span className={`text-[10px] font-mono uppercase font-bold tracking-widest opacity-90 ${theme.deptTag}`}>
+                          {member.department}
+                        </span>
+                      )}
+                      <h3 className="text-xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md">
+                        {member.name}
+                      </h3>
+                      <p className="text-xs font-semibold text-white/85 uppercase tracking-wider mt-0.5">
+                        {member.designation}
+                      </p>
+                    </div>
+
+                    {/* Hover State: Full Info & Social Links Overlay Above Image */}
+                    <div className={`absolute inset-0 z-30 ${theme.bg} bg-opacity-90 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out flex flex-col justify-center items-center p-6 text-center`}>
+                      {/* Pattern Grid inside overlay */}
+                      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_1px_1px,#ffffff_1px,transparent_0)] [background-size:16px_16px] pointer-events-none" />
+
+                      <div className="relative z-10 flex flex-col items-center max-w-[90%] transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                        <span className={`backdrop-blur-md px-3.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm mb-3 ${theme.badgeBg}`}>
+                          ★ Core Lead
+                        </span>
+
+                        {member.department && (
+                          <span className={`text-[11px] font-mono uppercase font-bold tracking-widest mb-1 opacity-90 ${theme.deptTag}`}>
+                            {member.department}
+                          </span>
+                        )}
+
+                        <h3 className="text-2xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md">
+                          {member.name}
+                        </h3>
+
+                        <p className="text-xs font-bold text-cyan-200 mt-1 uppercase tracking-wider">
+                          {member.designation}
+                        </p>
+
+                        {/* Social Links on Hover */}
+                        <div className="flex items-center justify-center gap-3 mt-6">
+                          {member.socialLinks?.linkedin && (
+                            <a
+                              href={member.socialLinks.linkedin}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="w-10 h-10 rounded-full bg-white/15 hover:bg-white text-white hover:text-blue-700 backdrop-blur-md flex items-center justify-center transition shadow-md hover:scale-110"
+                              title="LinkedIn Profile"
+                            >
+                              <Linkedin className="w-4 h-4" />
+                            </a>
+                          )}
+                          {member.socialLinks?.github && (
+                            <a
+                              href={member.socialLinks.github}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="w-10 h-10 rounded-full bg-white/15 hover:bg-white text-white hover:text-slate-900 backdrop-blur-md flex items-center justify-center transition shadow-md hover:scale-110"
+                              title="GitHub Profile"
+                            >
+                              <Github className="w-4 h-4" />
+                            </a>
+                          )}
+                          {member.email && (
+                            <a
+                              href={`mailto:${member.email}`}
+                              className="w-10 h-10 rounded-full bg-white/15 hover:bg-white text-white hover:text-ieee-blue backdrop-blur-md flex items-center justify-center transition shadow-md hover:scale-110"
+                              title="Email Lead"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
